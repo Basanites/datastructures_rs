@@ -1,4 +1,7 @@
-pub trait Collection: RefIterable + RefMutIterable + IntoIterable {
+mod queue;
+pub use queue::Queue;
+
+pub trait Collection {
     type Item;
 }
 
@@ -11,7 +14,7 @@ pub trait RefIterable<'a> {
 
 pub trait RefMutIterable<'a> {
     type Item: 'a;
-    type IterMut: Iterato<Item = &'a mut self::Item>;
+    type IterMut: Iterator<Item = &'a mut Self::Item>;
 
     fn iter_mut(self) -> Self::IterMut;
 }

@@ -44,6 +44,12 @@ where
     }
 }
 
+impl<T: Clone> Default for Queue<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: Clone> Collection for Queue<T> {
     type Item = T;
 }
@@ -80,7 +86,7 @@ mod tests {
         assert_eq!(ints.len(), 3);
         assert!(!ints.is_empty());
 
-        assert_eq!(ints.queue.get(0), Some(&0));
+        assert_eq!(ints.queue.first(), Some(&0));
         assert_eq!(ints.queue.get(1), Some(&1));
         assert_eq!(ints.queue.get(2), Some(&2));
     }
@@ -92,7 +98,7 @@ mod tests {
         assert_eq!(ints.len(), 3);
         assert!(!ints.is_empty());
 
-        assert_eq!(ints.queue.get(0), Some(&0));
+        assert_eq!(ints.queue.first(), Some(&0));
         assert_eq!(ints.queue.get(1), Some(&1));
         assert_eq!(ints.queue.get(2), Some(&2));
     }

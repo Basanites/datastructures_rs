@@ -1,15 +1,13 @@
-use crate::collections::Collection;
+use crate::collections::{Collection, IntoIterable};
 
 pub struct Queue<T>
-where
-    T: Clone,
+    where T: Clone,
 {
     queue: Vec<T>,
 }
 
 impl<T> Queue<T>
-where
-    T: Clone,
+    where T: Clone,
 {
     pub fn new() -> Self {
         Self { queue: Vec::new() }
@@ -52,6 +50,37 @@ impl<T: Clone> Default for Queue<T> {
 
 impl<T: Clone> Collection for Queue<T> {
     type Item = T;
+}
+
+impl<T: Clone> IntoIterable for Queue<T> {
+    type Item = T;
+    type IntoIter = QueueIntoIterator<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        QueueIntoIterator::from_queue(self)
+    }
+}
+
+pub struct QueueIntoIterator<T>
+    where T: Clone,
+{
+    queue: Queue<T>,
+}
+
+impl<T: Clone> QueueIntoIterator<T>
+{
+    pub fn from_queue(queue: Queue<T>) -> Self {
+        Self { queue }
+    }
+}
+
+impl<T: Clone> Iterator for QueueIntoIterator<T>
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.queue.dequeue()
+    }
 }
 
 #[cfg(test)]
@@ -120,5 +149,16 @@ mod tests {
 
         assert_eq!(ints.peek(), Some(&0));
         assert_eq!(empty_queue.peek(), None);
+    }
+
+    #[test]
+    fn into_iter_works() {
+        let ints = make_int_queue();
+        let mut iter = ints.into_iter();
+
+        assert_eq!(iter.next(), Some(0));
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.next(), None);
     }
 }
